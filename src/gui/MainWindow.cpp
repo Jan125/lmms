@@ -1380,7 +1380,10 @@ void MainWindow::autoSave()
 	{
 		//Recovery file is still needed for post-crash recovery dialog.
 		Engine::getSong()->saveProjectFile(ConfigManager::inst()->recoveryFile());
-		Engine::getSong()->saveProjectFile( autoSaveVersionedName.section('.', 0, 0).append(".").append("autosave").append(".").append(QDateTime::currentDateTime().toString("dd-MM-yyyy-hh-mm-ss-zzz")).append(".").append(autoSaveVersionedName.section('.', -1)) );
+		if( Engine::getSong()->projectFileName() != "" )
+		{
+			Engine::getSong()->saveProjectFile( autoSaveVersionedName.section('.', 0, 0).append(".").append("autosave").append(".").append(QDateTime::currentDateTime().toString("dd-MM-yyyy-hh-mm-ss-zzz")).append(".").append(autoSaveVersionedName.section('.', -1)) );
+		}
 		autoSaveTimerReset();  // Reset timer
 	}
 	else
