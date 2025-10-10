@@ -327,7 +327,6 @@ public:
 		return m_modified;
 	}
 
-
 	bool isModifiedAutosave() const
 	{
 		return m_modifiedautosave;
@@ -417,9 +416,9 @@ private slots:
 
 	void updateFramesPerTick();
 
-public:
 
-	void setPlayPos( tick_t ticks, PlayMode playMode );
+public:
+	void setPlayPos(tick_t ticks, PlayMode playMode);
 
 private:
 	Song();
