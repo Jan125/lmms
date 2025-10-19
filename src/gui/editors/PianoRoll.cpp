@@ -1125,8 +1125,9 @@ void PianoRoll::drawDetuningInfo( QPainter & _p, const Note * _n, int _x,
 			const float pre_level = OUTVAL(it - 1);
 			int pre_y = middle_y - pre_level * m_keyLineHeight;
 
-			// Draws the line representing the discrete jump if there's one
-			if (old_y != pre_y)
+			// Draws the line representing the discrete jump if there's one.
+			// Displaying this line in CubicHermite mode would add clutter, so we'll stop that, except when editing mode is active and on that note.
+			if ((old_y != pre_y) && (_n->detuning()->automationClip()->progressionType() != AutomationClip::ProgressionType::CubicHermite || (m_editMode == EditMode::Detuning && _n->selected())))
 			{
 				_p.drawLine(old_x, old_y, old_x, pre_y);
 			}
@@ -1142,7 +1143,7 @@ void PianoRoll::drawDetuningInfo( QPainter & _p, const Note * _n, int _x,
 				case AutomationClip::ProgressionType::CubicHermite: /* TODO: Make this more performant.*/
 				{
 					int cubiccurve_pre_x = old_x;
-					int cubiccurve_pre_y = pre_y;
+					int cubiccurve_pre_y = old_y;
 					for (int cubiccurve_counter = old_ticks; cubiccurve_counter <= cur_ticks; cubiccurve_counter++)
 					{
 						int cubiccurve_cur_x = _x + cubiccurve_counter * m_ppb / TimePos::ticksPerBar();
