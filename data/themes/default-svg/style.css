@@ -245,7 +245,7 @@ lmms--gui--Oscilloscope {
 
 lmms--gui--CPULoadWidget {
 	border: none;
-	background: url("resources:cpuload_bg.png");
+	background: url("resources:cpuload_bg.svg");
 	qproperty-stepSize: 1;
 }
 
