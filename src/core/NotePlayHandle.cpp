@@ -559,7 +559,6 @@ void NotePlayHandle::updateFrequency()
 
 void NotePlayHandle::processTimePos(const TimePos& time, float pitchValue, bool isRecording)
 {
-	// Have + 1 on each time to not have a 1 tick delay on note slides.
 	if (!detuning() || time < songGlobalParentOffset() + pos()) { return; }
 
 	if (isRecording && m_origin == Origin::MidiInput)
