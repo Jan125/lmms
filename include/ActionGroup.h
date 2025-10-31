@@ -41,9 +41,9 @@ class ActionGroup : public QActionGroup
 public:
 	ActionGroup(QObject* parent);
 
-	QAction* addAction(QAction *a);
-	QAction* addAction(const QString &text);
-	QAction* addAction(const QIcon &icon, const QString &text);
+	QAction* addAction(QAction* a);
+	QAction* addAction(const QString& text);
+	QAction* addAction(const QIcon& icon, const QString& text);
 
 signals:
 	/// This signal is emitted when the action at the given index is triggered.
