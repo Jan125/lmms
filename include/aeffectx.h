@@ -217,6 +217,8 @@ public:
 } ;
 
 
+
+
 class AEffect
 {
 public:
@@ -224,13 +226,13 @@ public:
 	// 00-03
 	int32_t magic;
 	// dispatcher 04-07
-	intptr_t (VST_CALL_CONV * dispatcher)( AEffect * , int32_t , int32_t , intptr_t, void * , float );
+	intptr_t (VST_CALL_CONV* dispatcher)(AEffect*, int32_t, int32_t, intptr_t, void*, float);
 	// process, quite sure 08-0b
-	void (VST_CALL_CONV * process)( AEffect * , float * * , float * * , int32_t );
+	void (VST_CALL_CONV* process)(AEffect*, float**, float**, int32_t);
 	// setParameter 0c-0f
-	void (VST_CALL_CONV * setParameter)( AEffect * , int32_t , float );
+	void (VST_CALL_CONV* setParameter)(AEffect*, int32_t, float);
 	// getParameter 10-13
-	float (VST_CALL_CONV * getParameter)( AEffect * , int32_t );
+	float (VST_CALL_CONV* getParameter)(AEffect* , int32_t);
 	// programs 14-17
 	int32_t numPrograms;
 	// Params 18-1b
@@ -242,22 +244,22 @@ public:
 	// flags 24-27
 	int32_t flags;
 	// Fill somewhere 28-2b
-	void *ptr1;
-	void *ptr2;
+	void* ptr1;
+	void* ptr2;
 	// Zeroes 2c-2f 30-33 34-37 38-3b
 	char empty3[4 + 4 + 4];
 	// 1.0f 3c-3f
 	float unknown_float;
 	// An object? pointer 40-43
-	void *ptr3;
+	void* ptr3;
 	// Zeroes 44-47
-	void *user;
+	void* user;
 	// Id 48-4b
 	int32_t uniqueID;
 	// Don't know 4c-4f
 	char unknown1[4];
 	// processReplacing 50-53
-	void (VST_CALL_CONV * processReplacing)( AEffect * , float * * , float * * , int );
+	void (VST_CALL_CONV* processReplacing)(AEffect*, float**, float**, int);
 
 } ;
 
@@ -297,6 +299,9 @@ public:
 	int32_t flags;
 
 } ;
+
+
+
 
 using audioMasterCallback = intptr_t (VST_CALL_CONV*)(AEffect*, int32_t, int32_t, intptr_t, void*, float);
 
