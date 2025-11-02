@@ -2924,8 +2924,8 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 				}
 				else
 				{
-					m_lastParameterDragRemovedNode = true;
 					aClip->putValue(0, 0.0f);
+					m_lastParameterDragRemovedNode = true;
 				}
 			}
 			else
@@ -2941,8 +2941,8 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 				}
 				else
 				{
-					m_lastParameterDragRemovedNode = true;
 					aClip->putValue(relativePos, 0.0f);
+					m_lastParameterDragRemovedNode = true;
 				}
 			}
 		}
@@ -2954,15 +2954,13 @@ void PianoRoll::applyParameterEditPos(QMouseEvent* me, Note::ParameterType param
 {
 	if (m_parameterEditDownRight)
 	{
-		if (!m_lastParameterDragRemovedNode && (m_lastParameterEditTick != -1))
+		if (!m_lastParameterDragRemovedNode)
 		{
 			int minTick = -1;
 			int maxTick = -1;
 			for (Note* note: m_selectedParameterEditNotes)
 			{
 				maxTick = std::max(maxTick, static_cast<int>(note->endPos()));
-
-
 
 				if (minTick == -1)
 				{
