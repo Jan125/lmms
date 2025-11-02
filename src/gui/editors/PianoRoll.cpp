@@ -2913,13 +2913,18 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 			// -1 means there is no previous mouse position, meaning that the drag just started.
 			if (m_lastParameterEditTick != -1)
 			{
-				// Don't allow the user to accidentally remove the default node at the very start of the note, by making sure the tick range is >= 1
+				// Don't allow the user to accidentally remove the default node at the very start of the note, by making sure the tick range is >= 1.
+				// Else, reset the first node value to 0.
 				if (!(m_lastParameterEditTick - m_parameterEditClickedNote->pos() == 0 && relativePos == 0))
 				{
-					aClip->removeNodes(std::max(1, m_lastParameterEditTick - m_parameterEditClickedNote->pos()), std::max(TimePos{1}, relativePos));
+					if (aClip->removeNodes(std::max(1, m_lastParameterEditTick - m_parameterEditClickedNote->pos()), std::max(TimePos{1}, relativePos)))
+					{
+						m_lastParameterDragRemovedNode = true;
+					}
 				}
 				else
 				{
+					m_lastParameterDragRemovedNode = true;
 					aClip->putValue(0, 0.0f);
 				}
 			}
@@ -2929,10 +2934,14 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 				// But don't allow the user to delete the first node
 				if (relativePos != 0)
 				{
-					aClip->removeNode(relativePos);
+					if (aClip->removeNode(relativePos))
+					{
+						m_lastParameterDragRemovedNode = true;
+					}
 				}
 				else
 				{
+					m_lastParameterDragRemovedNode = true;
 					aClip->putValue(relativePos, 0.0f);
 				}
 			}
@@ -2943,6 +2952,41 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 
 void PianoRoll::applyParameterEditPos(QMouseEvent* me, Note::ParameterType paramType)
 {
+	if (m_parameterEditDownRight)
+	{
+		if (!m_lastParameterDragRemovedNode && (m_lastParameterEditTick != -1))
+		{
+			int minTick = -1;
+			int maxTick = -1;
+			for (Note* note: m_selectedParameterEditNotes)
+			{
+				maxTick = std::max(maxTick, static_cast<int>(note->endPos()));
+
+
+
+				if (minTick == -1)
+				{
+					minTick = note->pos();
+				}
+				else
+				{
+					minTick = std::min(minTick, static_cast<int>(note->pos()));
+				}
+
+				AutomationClip* aClip = note->parameterCurve(paramType);
+				if (aClip == nullptr) { continue; }
+
+				maxTick = std::max(maxTick, static_cast<int>(note->endPos() + (!aClip->getTimeMap().isEmpty() ? aClip->getTimeMap().lastKey() : 0)));
+			}
+
+			if (m_lastParameterEditTick < minTick || m_lastParameterEditTick > maxTick)
+			{
+				clearSelectedNotes();
+			}
+		}
+		m_lastParameterDragRemovedNode = false;
+	}
+
 	// If the left button was just released, apply the drag on all of the notes' automation clips.
 	if (m_parameterEditDownLeft)
 	{
