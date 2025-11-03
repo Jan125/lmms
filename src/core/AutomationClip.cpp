@@ -323,13 +323,13 @@ TimePos AutomationClip::putValues(
 
 
 
-void AutomationClip::removeNode(const TimePos & time)
+bool AutomationClip::removeNode(const TimePos & time)
 {
 	QMutexLocker m(&m_clipMutex);
 
 	cleanObjects();
 
-	m_timeMap.remove( time );
+	bool hasRemovedNode = m_timeMap.remove( time );
 	timeMap::iterator it = m_timeMap.lowerBound(time);
 	if( it != m_timeMap.begin() )
 	{
@@ -340,6 +340,8 @@ void AutomationClip::removeNode(const TimePos & time)
 	updateLength();
 
 	emit dataChanged();
+
+	return hasRemovedNode;
 }
 
 
@@ -350,12 +352,11 @@ void AutomationClip::removeNode(const TimePos & time)
  * @param Int first tick of the range
  * @param Int second tick of the range
  */
-void AutomationClip::removeNodes(const int tick0, const int tick1)
+int AutomationClip::removeNodes(const int tick0, const int tick1)
 {
 	if (tick0 == tick1)
 	{
-		removeNode(TimePos(tick0));
-		return;
+		return removeNode(TimePos(tick0));;
 	}
 
 	auto start = TimePos(std::min(tick0, tick1));
@@ -371,10 +372,14 @@ void AutomationClip::removeNodes(const int tick0, const int tick1)
 		nodesToRemove.push_back(POS(it));
 	}
 
+	int removedNodeCount = nodesToRemove.size();
+
 	for (auto node: nodesToRemove)
 	{
 		removeNode(node);
 	}
+
+	return removedNodeCount;
 }
 
 
