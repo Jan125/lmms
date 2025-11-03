@@ -31,12 +31,18 @@
      <property name="text">
       <string>Export as loop (remove extra bar)</string>
      </property>
+     <property name="checked">
+      <number>1</number>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="renderMarkersCB">
      <property name="text">
       <string>Export between loop markers</string>
+     </property>
+	 <property name="checked">
+      <number>1</number>
      </property>
     </widget>
    </item>
@@ -152,7 +158,7 @@
            <item>
             <widget class="QComboBox" name="depthCB">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <item>
               <property name="text">
