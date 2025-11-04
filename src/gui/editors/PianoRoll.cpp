@@ -2856,16 +2856,22 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 		// Do not allow right click mode if left click is already held.
 		m_parameterEditDownRight = (m_parameterEditDownRight || me->button() & Qt::RightButton) && m_parameterEditDownLeft == false;
 		m_lastParameterEditTick = -1;
-		// Get the note with the closest automation curve to the mouse cursor
+		// Get the note with the closest automation curve to the mouse cursor.
+		// If it returns nullptr, check if we have notes selected instead and get the first of those.
 		m_parameterEditClickedNote = parameterEditNoteUnderMouse(paramType);
+		if (m_parameterEditClickedNote == nullptr && !m_selectedParameterEditNotes.empty())
+		{
+			m_parameterEditClickedNote = m_selectedParameterEditNotes.front();
+		}
 	}
 
 	if (!m_parameterEditClickedNote) { return; }
 
 	// Calculate the key and time of the mouse cursor in the piano roll
 
-	int keyNum = getKey(me->y());
-	int posTicks = (me->x() - m_whiteKeyWidth) *
+	int keyNum = getKey(me->position().y());
+
+	int posTicks = (me->position().x() - m_whiteKeyWidth) *
 			TimePos::ticksPerBar() / m_ppb + m_currentPosition;
 
 	// Calculate the relative position of the mouse with respect to the note.
@@ -2921,14 +2927,14 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 			{
 				// Don't allow the user to accidentally remove the default node at the very start of the note, by making sure the tick range is >= 1.
 				// Else, reset the first node value to 0.
-				if (!(m_lastParameterEditTick - m_parameterEditClickedNote->pos() == 0 && relativePos == 0))
+				if (!(m_lastParameterEditTick - m_parameterEditClickedNote->pos() == 0) && relativePos > 0)
 				{
 					if (aClip->removeNodes(std::max(1, m_lastParameterEditTick - m_parameterEditClickedNote->pos()), std::max(TimePos{1}, relativePos)))
 					{
 						m_lastParameterDragRemovedNode = true;
 					}
 				}
-				else
+				else if (relativePos == 0)
 				{
 					aClip->putValue(0, 0.0f);
 					m_lastParameterDragRemovedNode = true;
