@@ -5194,9 +5194,6 @@ Note * PianoRoll::parameterEditNoteUnderMouse(Note::ParameterType paramType)
 	Note* closestNote = nullptr;
 	for (Note* note : m_selectedParameterEditNotes)
 	{
-		// Skip note if the mouse is outside of its start time
-		if (posTicks < note->pos()) { continue; }
-
 		TimePos relativePos = posTicks - note->pos();
 		int relativeKey = keyNum - note->key();
 
