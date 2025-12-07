@@ -87,9 +87,10 @@ void TimeLineWidget::addToolButtons( QToolBar * _tool_bar )
 {
 	auto autoScroll = new NStateButton(_tool_bar);
 	autoScroll->setGeneralToolTip(tr("Auto scrolling"));
-	autoScroll->addState(embed::getIconPixmap("autoscroll_off"), tr("Auto scrolling disabled"));
 	autoScroll->addState(embed::getIconPixmap("autoscroll_stepped_on"), tr("Stepped auto scrolling"));
 	autoScroll->addState(embed::getIconPixmap("autoscroll_continuous_on"), tr("Continuous auto scrolling"));
+	autoScroll->addState(embed::getIconPixmap("autoscroll_off"), tr("Auto scrolling disabled"));
+	autoScroll->changeState(static_cast<int>(m_autoScroll));
 	connect( autoScroll, SIGNAL(changedState(int)), this,
 					SLOT(toggleAutoScroll(int)));
 
@@ -340,17 +341,14 @@ void TimeLineWidget::mouseMoveEvent( QMouseEvent* event )
 	{
 		case Action::MovePositionMarker:
 			m_pos.setTicks(timeAtCursor.getTicks());
-			//We have to explicitly specify both of these cases, otherwise the timer does not get updated.
-			if (!Engine::getSong()->isPlaying())
+			Engine::getSong()->setToTime(timeAtCursor, m_mode);
+			if (!( Engine::getSong()->isPlaying()))
 			{
-				Engine::getSong()->setPlayPos(timeAtCursor.getTicks(), Song::PlayMode::None);
+				//Song::PlayMode::None is used when nothing is being played.
+				Engine::getSong()->setToTime(timeAtCursor, Song::PlayMode::None);
 			}
-			else
-			{
-				Engine::getSong()->setPlayPos(timeAtCursor.getTicks(), m_mode);
-			}
-			m_pos.setCurrentFrame(0);
-			m_pos.setJumped(true);
+			m_pos.setCurrentFrame( 0 );
+			m_pos.setJumped( true );
 			updatePosition();
 			break;
 
@@ -461,5 +459,16 @@ void TimeLineWidget::contextMenuEvent(QContextMenuEvent* event)
 
 	menu.exec(event->globalPos());
 }
+
+
+TimeLineWidget::AutoScrollState TimeLineWidget::defaultAutoScrollState()
+{
+	QString autoScrollState = ConfigManager::inst()->value("ui", "autoscroll");
+	if (autoScrollState == AutoScrollSteppedString) { return AutoScrollState::Stepped; }
+	else if (autoScrollState == AutoScrollContinuousString) { return AutoScrollState::Continuous; }
+	else if (autoScrollState == AutoScrollDisabledString) { return AutoScrollState::Disabled; }
+	else { return AutoScrollState::Stepped; }
+}
+
 
 } // namespace lmms::gui
