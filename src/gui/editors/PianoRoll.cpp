@@ -2894,7 +2894,7 @@ void PianoRoll::updateParameterEditPos(QMouseEvent* me, Note::ParameterType para
 				{
 					if (POS(it) == Note::quantized(relativePos, quantization()))
 					{
-						aClip->putValues(relativePos, aClip->valueAt(Note::quantized(relativePos, quantization())), relativeKey);
+						aClip->putValues(relativePos, aClip->valueAt(Note::quantized(relativePos, quantization()), true), relativeKey);
 					}
 				}
 			}
